@@ -1,0 +1,6 @@
+@blog_list_net_backend_HostAddress = http://localhost:5113
+
+GET {{blog_list_net_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
