@@ -1,25 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
+using blog_list_net_backend.Models;
+using blog_list_net_backend.Services;
 
 namespace blog_list_net_backend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("blogs")]
     public class BlogsController : ControllerBase
     {
-        public BlogsController()
+        private readonly BlogService _service;
+        public BlogsController(BlogService service)
         {
+            _service = service;
         }
 
-        [HttpGet(Name = "blogs")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet]
+        public ActionResult<IEnumerable<Blog>> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return _service.GetAll();
         }
     }
 }

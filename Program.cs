@@ -1,9 +1,13 @@
+using blog_list_net_backend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<BlogService>();
 
 var app = builder.Build();
 

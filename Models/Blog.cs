@@ -2,26 +2,20 @@
 
 namespace blog_list_net_backend.Models;
 
-public class Blog
+public class Blog(string title, string url)
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required]
-    public string? Title { get; set; }
+    public string? Title { get; set; } = title;
     public string? Author { get; set; }
 
-    public int UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     [Required]
-    public string? Url { get; set; }
+    public string? Url { get; set; } = url;
 
     public int Likes { get; set; } = 0;
 
     public List<Comment>? Comments { get; set; }
-}
-
-public class Comment
-{
-    public int Text { get; set; }
-    public int CommentId { get; set; }
 }
