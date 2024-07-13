@@ -5,14 +5,10 @@ namespace blog_list_net_backend.Controllers;
 
 [ApiController]
 [Route("login")]
-public class LoginController : ControllerBase
+public class LoginController() : ControllerBase
 {
-    public LoginController()
-    {
-    }
-
     [HttpPost]
-    public User Post()
+    public User Login()
     {
         throw new NotImplementedException();
     }

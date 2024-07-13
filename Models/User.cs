@@ -16,5 +16,5 @@ public class User
 
     public string? Name { get; set; }
 
-    public List<Guid>? BlogIds { get; set; }
+    public List<Blog>? Blogs { get; set; }
 }

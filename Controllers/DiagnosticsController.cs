@@ -4,12 +4,8 @@ namespace blog_list_net_backend.Controllers
 {
     [ApiController]
     [Route("diagnostics")]
-    public class DiagnosticsController : ControllerBase
+    public class DiagnosticsController() : ControllerBase
     {
-        public DiagnosticsController()
-        {
-        }
-
         [HttpGet("version")]
         public ActionResult<string> GetVersion()
         {
