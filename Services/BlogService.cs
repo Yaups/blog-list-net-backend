@@ -1,30 +1,65 @@
 ﻿using blog_list_net_backend.Contexts;
+using blog_list_net_backend.DTOs;
 using blog_list_net_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace blog_list_net_backend.Services;
 
-public class BlogService
+public class BlogService(BlogContext context)
 {
-    private readonly BlogContext _context;
+    private readonly BlogContext _context = context;
 
-    public BlogService(BlogContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<List<Blog>> FindAllAsync()
+    public async Task<List<BlogWithUserDto>> FindAllAsync()
     {
         return await _context.Blogs
             .Include(b => b.User)
+            .Select(b => new BlogWithUserDto
+            (
+                b.Id,
+                b.Title!,
+                b.Author,
+                b.Url!,
+                b.Likes,
+                new UserWithoutBlogsDto
+                (
+                    b.User!.Id,
+                    b.User.Username!,
+                    b.User.Name!
+                ),
+                new List<CommentDto>()
+            ))
             .ToListAsync();
     }
 
-    public async Task<Blog?> FindOneAsync(Guid id)
+    public async Task<BlogWithUserDto?> FindOneAsync(Guid id)
     {
-        return await _context.Blogs
+        var blog = await _context.Blogs
             .Include(b => b.User)
             .FirstOrDefaultAsync(b => b.Id == id);
+
+        if (blog is null) return null;
+
+        var blogDto = new BlogWithUserDto
+            (
+                blog.Id,
+                blog.Title!,
+                blog.Author,
+                blog.Url!,
+                blog.Likes,
+                new UserWithoutBlogsDto
+                (
+                    blog.User!.Id,
+                    blog.User.Username!,
+                    blog.User.Name!
+                ),
+                blog.Comments?.Select(c => new CommentDto
+                (
+                    c.Id!,
+                    c.Text!
+                )).ToList()
+            );
+
+        return blogDto;
     }
 
     public async Task<Blog?> CreateAsync(Blog blog, Guid userId)
@@ -55,13 +90,45 @@ public class BlogService
         }
     }
 
-    public async Task Update(Guid blogId, Blog updatedBlog)
+    public async Task<Blog?> IncreaseLikesByOneAsync(Guid blogId)
     {
-        var oldBlog = await _context.Blogs.FindAsync(blogId);
+        var blog = await _context.Blogs.FindAsync(blogId);
 
-        if (oldBlog is null) throw new InvalidOperationException("Blog to update not found");
+        if (blog is null) return null;
 
-        oldBlog.Likes = updatedBlog.Likes;
+        blog.Likes += 1;
+        await _context.SaveChangesAsync();
+
+        return blog;
+    }
+
+    public async Task<Comment?> PostCommentAsync(Guid blogId, Comment comment)
+    {
+        var blog = await _context.Blogs.FindAsync(blogId);
+
+        if (blog is null) throw new InvalidOperationException("Error posting comment: blog not found");
+
+        try
+        {
+            blog.Comments ??= [];
+            blog.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+        }
+        catch
+        {
+            return null;
+        }
+
+        return comment;
+    }
+
+    public async Task DeleteBlogByIdAsync(Guid blogId)
+    {
+        var blogToDelete = await _context.Blogs.FindAsync(blogId);
+
+        if (blogToDelete is null) throw new InvalidOperationException("Error deleting blog: Blog not found");
+
+        _context.Blogs.Remove(blogToDelete);
 
         await _context.SaveChangesAsync();
     }

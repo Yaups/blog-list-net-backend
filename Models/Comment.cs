@@ -7,5 +7,5 @@ public class Comment
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required]
-    public int Text { get; set; }
+    public string? Text { get; set; }
 }

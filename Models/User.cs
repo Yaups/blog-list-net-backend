@@ -14,6 +14,7 @@ public class User
     [Required]
     public string? PasswordHash { get; set; }
 
+    [Required]
     public string? Name { get; set; }
 
     public List<Blog>? Blogs { get; set; }
