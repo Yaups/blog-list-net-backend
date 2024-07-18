@@ -21,7 +21,7 @@ public class UsersController(UserService service) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<UserWithBlogsDto>> GetById(Guid id)
     {
-        var user = await _service.FindOneAsync(id);
+        var user = await _service.FindByIdAsync(id);
 
         if (user is null) return NotFound();
 
@@ -31,15 +31,14 @@ public class UsersController(UserService service) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserWithoutBlogsDto>> Post(NewUserDto user)
     {
-        try
-        {
-            var postedUser = await _service.CreateAsync(user);
+        bool usernameIsUnique = await _service.IsUniqueUsername(user.Username);
+        if (!usernameIsUnique) return BadRequest("Username already exists");
 
-            return CreatedAtAction(nameof(GetById), new { id = postedUser.Id }, postedUser);
-        }
-        catch
-        {
-            return BadRequest();
-        }
+        var postedUser = await _service.CreateAsync(user);
+
+        if (postedUser is null) return BadRequest("Error creating user: problem with formatting");
+
+        return CreatedAtAction(nameof(GetById), new { id = postedUser.Id }, postedUser);
+
     }
 }

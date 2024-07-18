@@ -12,7 +12,6 @@ public class UserService(BlogContext context)
 
     public async Task<List<UserWithBlogsDto>> FindAllAsync()
     {
-        //include total number of blogs instead of all blogs
         return await _context.Users
             .Include(u => u.Blogs)
             .Select(u => new UserWithBlogsDto
@@ -33,7 +32,7 @@ public class UserService(BlogContext context)
             .ToListAsync();
     }
 
-    public async Task<UserWithBlogsDto?> FindOneAsync(Guid id)
+    public async Task<UserWithBlogsDto?> FindByIdAsync(Guid id)
     {
         var user = await _context.Users
             .Include(u => u.Blogs)
@@ -55,6 +54,15 @@ public class UserService(BlogContext context)
                     b.Likes
                 )).ToList()
             );
+    }
+
+    public async Task<bool> IsUniqueUsername(string username)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+        if (user is null) return true;
+
+        return false;
     }
 
     public async Task<UserWithoutBlogsDto> CreateAsync(NewUserDto newUser)

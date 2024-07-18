@@ -2,6 +2,7 @@
 using blog_list_net_backend.DTOs;
 using blog_list_net_backend.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace blog_list_net_backend.Services;
 
@@ -35,6 +36,7 @@ public class BlogService(BlogContext context)
     {
         var blog = await _context.Blogs
             .Include(b => b.User)
+            .Include(b => b.Comments)
             .FirstOrDefaultAsync(b => b.Id == id);
 
         if (blog is null) return null;
@@ -110,12 +112,14 @@ public class BlogService(BlogContext context)
 
         try
         {
+            await _context.Comments.AddAsync(comment);
             blog.Comments ??= [];
             blog.Comments.Add(comment);
             await _context.SaveChangesAsync();
         }
-        catch
+        catch (Exception e)
         {
+            Console.Error.WriteLine(e);
             return null;
         }
 

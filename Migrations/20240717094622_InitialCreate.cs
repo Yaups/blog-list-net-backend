@@ -18,7 +18,7 @@ namespace blog_list_net_backend.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Username = table.Column<string>(type: "TEXT", nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,11 +30,11 @@ namespace blog_list_net_backend.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Author = table.Column<string>(type: "TEXT", nullable: true),
                     Url = table.Column<string>(type: "TEXT", nullable: false),
-                    Likes = table.Column<int>(type: "INTEGER", nullable: false)
+                    Likes = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -43,8 +43,7 @@ namespace blog_list_net_backend.Migrations
                         name: "FK_Blogs_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -52,7 +51,7 @@ namespace blog_list_net_backend.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Text = table.Column<int>(type: "INTEGER", nullable: false),
+                    Text = table.Column<string>(type: "TEXT", nullable: false),
                     BlogId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>

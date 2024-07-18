@@ -41,7 +41,7 @@ public class BlogsController(BlogService blogService, UserService userService) :
         bool isValidGuid = Guid.TryParse(userIdString, out Guid userId);
         if (!isValidGuid) return Unauthorized("You are not logged in.");
 
-        var user = await _userService.FindOneAsync(userId);
+        var user = await _userService.FindByIdAsync(userId);
 
         if (user is null) return Unauthorized("You must be logged in to post a blog!");
 
@@ -51,7 +51,9 @@ public class BlogsController(BlogService blogService, UserService userService) :
 
         await _userService.AssignBlogToUserAsync(userId, postedBlog);
 
-        return CreatedAtAction(nameof(GetById), new { id = postedBlog.Id }, postedBlog);
+        var blogToReturn = new BlogWithoutUserDto(postedBlog.Id, postedBlog.Title!, postedBlog.Author, postedBlog.Url!, postedBlog.Likes);
+
+        return CreatedAtAction(nameof(GetById), new { id = postedBlog.Id }, blogToReturn);
     }
 
     [Authorize]
@@ -62,9 +64,9 @@ public class BlogsController(BlogService blogService, UserService userService) :
 
         string? userIdString = currentUser.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
         bool isValidGuid = Guid.TryParse(userIdString, out Guid userId);
-        if (!isValidGuid) return Unauthorized("You are not logged in.");
+        if (!isValidGuid) return Unauthorized("You must be logged in to post a comment.");
 
-        var user = await _userService.FindOneAsync(userId);
+        var user = await _userService.FindByIdAsync(userId);
         if (user is null) return Unauthorized();
 
         var blog = await _blogService.FindOneAsync(blogId);
@@ -86,10 +88,8 @@ public class BlogsController(BlogService blogService, UserService userService) :
         bool isValidGuid = Guid.TryParse(userIdString, out Guid userId);
         if (!isValidGuid) return Unauthorized("You are not logged in.");
 
-        var user = await _userService.FindOneAsync(userId);
+        var user = await _userService.FindByIdAsync(userId);
         if (user is null) return Unauthorized();
-
-        //CAN ONLY LIKE IF YOU HAVE NOT LIKED THE BLOG ALREADY?
 
         var successfulBlog = await _blogService.IncreaseLikesByOneAsync(id);
 
@@ -108,7 +108,7 @@ public class BlogsController(BlogService blogService, UserService userService) :
         bool isValidGuid = Guid.TryParse(userIdString, out Guid userId);
         if (!isValidGuid) return Unauthorized("You are not logged in.");
 
-        var user = await _userService.FindOneAsync(userId);
+        var user = await _userService.FindByIdAsync(userId);
         if (user is null) return Unauthorized();
 
         var blogToDelete = await _blogService.FindOneAsync(id);

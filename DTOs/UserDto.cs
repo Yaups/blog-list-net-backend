@@ -2,11 +2,11 @@
 
 public class NewUserDto(string username, string password, string name)
 {
-    public string Username { get; set; } = username;
+    public string Username { get; init; } = username;
 
-    public string Password { get; set; } = password;
+    public string Password { get; init; } = password;
 
-    public string Name { get; set; } = name;
+    public string Name { get; init; } = name;
 }
 
 public class BaseUserDto(Guid id, string username)

@@ -6,7 +6,6 @@ public class User
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    //[Unique]??
     [Required]
     [MinLength(3)]
     public string? Username { get; set; }

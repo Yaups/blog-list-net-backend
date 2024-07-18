@@ -1,11 +1,16 @@
-﻿namespace blog_list_net_backend.DTOs
+﻿namespace blog_list_net_backend.DTOs;
+
+public class LoginRequestDto(string username, string password)
 {
-    public class LoginResponseDto(string token, string username, string name)
-    {
-        public string Token { get; set; } = token;
+    public string Username { get; init; } = username;
 
-        public string Username { get; set; } = username;
+    public string Password { get; init; } = password;
+}
+public class LoginResponseDto(string token, string username, string name)
+{
+    public string Token { get; init; } = token;
 
-        public string Name { get; set; } = name;
-    }
+    public string Username { get; init; } = username;
+
+    public string Name { get; init; } = name;
 }

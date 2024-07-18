@@ -37,7 +37,7 @@ namespace blog_list_net_backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -56,8 +56,9 @@ namespace blog_list_net_backend.Migrations
                     b.Property<Guid?>("BlogId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Text")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -73,6 +74,7 @@ namespace blog_list_net_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
@@ -92,9 +94,7 @@ namespace blog_list_net_backend.Migrations
                 {
                     b.HasOne("blog_list_net_backend.Models.User", "User")
                         .WithMany("Blogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
